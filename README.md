@@ -3,19 +3,22 @@
 
 # Project description
 
-As a prototype, a RabbtiqMQ instance is to be set up.
+You can run the project using docker-compose. This will create the following containers
 
-The following components are to be programmed:
 
-● A producer that reads the sample data and emits it at random intervals
+● a RabbtiqMQ instance
+
+●  A RabbitMQ producer that reads the sample data and emits it at random intervals
 between 0-1 second. 
 
-● In RabbitMQ Consumer, which reads this data from a queue, performs the following
+● A RabbitMQ Consumer, which reads this data from a queue, performs the following
 aggregations, and stores the results:
 
   ○ Global number of edits per minute.
 
   ○ Number of edits of the German Wikipedia per minute.
+
+● Mysql database Results where we store aggregations results made by the RabbitMQ Consumer
 
 <!--
 ## Command in terminal
@@ -26,7 +29,7 @@ aggregations, and stores the results:
 -->
 
 
-## docker compose usage explanation
+## How to run the project
 go to the project location in the terminal
 
 run the following command 
