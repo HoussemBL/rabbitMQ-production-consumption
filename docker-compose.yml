@@ -1,0 +1,81 @@
+version: '3'
+services:
+
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+        - 5672:5672
+        - 5673:5673
+        - 15672:15672
+    expose:
+      - '5672'
+      - '5673'
+    environment:
+      - RABBITMQ_MAX_CONNECTIONS=100  # Increase the maximum number of connections
+      - RABBITMQ_CHANNEL_MAX=1000
+    networks:
+      spark_net:
+        ipv4_address: 172.28.1.1
+    extra_hosts:
+        - "mysql:172.28.1.2"
+        - "rabbit-mqpublisher:172.28.1.3"
+
+  mysql:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+    ports:
+      - 3306:3306
+    expose:
+      - '3306'
+    volumes:
+      - ./docker-data/:/docker-entrypoint-initdb.d
+    networks:
+      spark_net:
+        ipv4_address: 172.28.1.2
+    extra_hosts:
+          - "rabbitmq:172.28.1.1"
+          - "rabbit-mqpublisher:172.28.1.3"
+
+  rabbitmq-consumer:
+    build:
+      context: ./target
+      #dockerfile: /home/houssem/scala-workspace/Europace_DE_Project/project2/Dockerfile
+      dockerfile: ../project2/Dockerfile
+    depends_on:
+      - rabbit-mqpublisher
+      - rabbitmq
+      - mysql
+    networks:
+      spark_net:
+        ipv4_address: 172.28.1.4
+    extra_hosts:
+      - "rabbitmq:172.28.1.1"
+      - "mysql:172.28.1.2"
+
+  rabbit-mqpublisher:
+    build:
+      context: ./target
+      dockerfile: ../project1/Dockerfile
+    depends_on:
+      - rabbitmq
+      - mysql
+    networks:
+      spark_net:
+        ipv4_address: 172.28.1.3
+    extra_hosts:
+      - "rabbitmq:172.28.1.1"
+      - "mysql:172.28.1.2"
+
+
+
+networks:
+  spark_net:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.28.0.0/20
