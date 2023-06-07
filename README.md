@@ -6,7 +6,7 @@
 You can run the project using docker-compose. This will create the following containers
 
 
-● a RabbtiqMQ instance
+● A RabbtiqMQ instance
 
 ●  A RabbitMQ producer that reads the sample data and emits it at random intervals
 between 0-1 second. 
@@ -18,7 +18,7 @@ aggregations, and stores the results:
 
   ○ Number of edits of the German Wikipedia per minute.
 
-● Mysql database Results where we store aggregations results made by the RabbitMQ Consumer
+● A Mysql database instance where we store aggregations results made by the RabbitMQ Consumer
 
 <!--
 ## Command in terminal
