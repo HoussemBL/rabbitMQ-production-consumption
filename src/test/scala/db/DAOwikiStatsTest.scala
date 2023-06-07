@@ -23,7 +23,6 @@ class DAOwikiStatsTest extends AnyFunSuite with BeforeAndAfter {
     // Create a new connection and prepare the insert statement
     Class.forName("org.h2.Driver")
     connection = DriverManager.getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", "sa", "")
-    //statement = connection.prepareStatement("INSERT INTO persons (id, name) VALUES (?, ?)")
     statement = connection.createStatement()
 
     // Create the "person" table
@@ -44,6 +43,14 @@ class DAOwikiStatsTest extends AnyFunSuite with BeforeAndAfter {
   //clean all repos used during the test
   after {
 
+
+    // Create the "person" table
+    val dropTableQuery =
+      """
+        |drop TABLE  stats
+        |""".stripMargin
+
+    statement.execute(dropTableQuery)
     // Close the statement and connection
     statement.close()
     connection.close()
@@ -62,7 +69,7 @@ class DAOwikiStatsTest extends AnyFunSuite with BeforeAndAfter {
   }
 
 
-  test("wrong db info") {
+  test("wrong db  username") {
     implicit val propsSQL = new Properties
     propsSQL.setProperty("jdbc_driver", "org.h2.Driver")
     propsSQL.setProperty("db_url", "jdbc:h2:mem:test;DB_CLOSE_DELAY=-")
@@ -73,6 +80,19 @@ class DAOwikiStatsTest extends AnyFunSuite with BeforeAndAfter {
    val operationSucceeed= objectWiki.insert()
     //assertThrows[JdbcSQLInvalidAuthorizationSpecException](objectWiki.insert())
     assert(operationSucceeed== false)
+  }
+
+  test("wrong db  password") {
+    implicit val propsSQL = new Properties
+    propsSQL.setProperty("jdbc_driver", "org.h2.Driver")
+    propsSQL.setProperty("db_url", "jdbc:h2:mem:test;DB_CLOSE_DELAY=-")
+    propsSQL.setProperty("mysql_user", "sa")
+    propsSQL.setProperty("mysql_pass", "sa")
+    val objectWiki = DAOwikiStats(22, 11)
+
+    val operationSucceeed = objectWiki.insert()
+    //assertThrows[JdbcSQLInvalidAuthorizationSpecException](objectWiki.insert())
+    assert(operationSucceeed == false)
   }
 
 }
