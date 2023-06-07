@@ -6,14 +6,16 @@
 As a prototype, a RabbtiqMQ instance is to be set up.
 
 The following components are to be programmed:
+
 ● A producer that reads the sample data and emits it at random intervals
-between 0-1 second. Use an exchange that makes sense for the task.
-Exchange.
+between 0-1 second. 
 
 ● In RabbitMQ Consumer, which reads this data from a queue, performs the following
 aggregations, and stores the results:
-○ Global number of edits per minute.
-○ Number of edits of the German Wikipedia per minute.
+
+  ○ Global number of edits per minute.
+
+  ○ Number of edits of the German Wikipedia per minute.
 
 <!--
 ## Command in terminal
