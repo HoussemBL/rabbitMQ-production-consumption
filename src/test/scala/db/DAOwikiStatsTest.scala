@@ -2,37 +2,42 @@ package consumer
 
 
 import db.DAOwikiStats
-import org.apache.spark.sql.{DataFrame, SparkSession}
+import org.h2.jdbc.JdbcSQLInvalidAuthorizationSpecException
 import org.junit.runner.RunWith
 import org.scalatest.BeforeAndAfter
 import org.scalatest.funsuite.AnyFunSuite
 import org.specs2.runner.JUnitRunner
 
-import java.io.File
-import java.nio.file.{Files, Path, Paths}
-import slick.jdbc.MySQLProfile.api._
-
-import java.sql.{Connection, DriverManager, PreparedStatement}
+import java.sql.{Connection, DriverManager, Statement}
 import java.util.Properties
 
 @RunWith(classOf[JUnitRunner])
 class DAOwikiStatsTest extends AnyFunSuite with BeforeAndAfter {
 
-
-
-
-
-
   // Database connection and statement variables
   var connection: Connection = _
-  var statement: PreparedStatement = _
+  var statement: Statement = _
 
 
   before {
     // Create a new connection and prepare the insert statement
-//    Class.forName(driver)
-    //connection = DriverManager.getConnection(url, username, password)
+    Class.forName("org.h2.Driver")
+    connection = DriverManager.getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", "sa", "")
     //statement = connection.prepareStatement("INSERT INTO persons (id, name) VALUES (?, ?)")
+    statement = connection.createStatement()
+
+    // Create the "person" table
+    val createTableQuery =
+      """
+        |CREATE TABLE if not exists stats  (
+        |  id INT AUTO_INCREMENT PRIMARY KEY,
+        |  timestamp_val VARCHAR(255),
+        |  num_edits BIGINT ,
+        |  num_edits_german BIGINT
+        |)
+        |""".stripMargin
+
+    statement.execute(createTableQuery)
   }
 
 
@@ -40,8 +45,8 @@ class DAOwikiStatsTest extends AnyFunSuite with BeforeAndAfter {
   after {
 
     // Close the statement and connection
-  //  statement.close()
-   // connection.close()
+    statement.close()
+    connection.close()
   }
 
 
@@ -52,19 +57,22 @@ class DAOwikiStatsTest extends AnyFunSuite with BeforeAndAfter {
     propsSQL.setProperty("mysql_user", "sa")
     propsSQL.setProperty("mysql_pass", "")
     val objectWiki = DAOwikiStats(22, 11)
-    objectWiki.insert()
-    assert(true)
+    val operationSucceeed=objectWiki.insert()
+    assert(operationSucceeed == true)
   }
+
 
   test("wrong db info") {
     implicit val propsSQL = new Properties
     propsSQL.setProperty("jdbc_driver", "org.h2.Driver")
-    propsSQL.setProperty("db_url", "jd-1")
-    propsSQL.setProperty("mysql_user", "sa")
+    propsSQL.setProperty("db_url", "jdbc:h2:mem:test;DB_CLOSE_DELAY=-")
+    propsSQL.setProperty("mysql_user", "sadsa")
     propsSQL.setProperty("mysql_pass", "")
     val objectWiki = DAOwikiStats(22, 11)
 
-    assertThrows[java.lang.ClassNotFoundException](objectWiki.insert())
+   val operationSucceeed= objectWiki.insert()
+    //assertThrows[JdbcSQLInvalidAuthorizationSpecException](objectWiki.insert())
+    assert(operationSucceeed== false)
   }
 
 }
