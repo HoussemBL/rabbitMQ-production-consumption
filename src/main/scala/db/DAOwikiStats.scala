@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 //class used to insert data in mysql DB
-case class DAOwikiStats(num_edits: Long, num_edits_german: Long)(implicit DBparameters: Properties) {
+case class DAOwikiStats(num_edits: Long, num_edits_german: Long)(implicit SqlParams: Properties) {
   //:todo
   def insert(): Boolean = {
 
@@ -16,10 +16,10 @@ case class DAOwikiStats(num_edits: Long, num_edits_german: Long)(implicit DBpara
 
     try {
       //database info
-      val JDBC_DRIVER = DBparameters.getProperty("jdbc_driver")
-      val DB_URL = DBparameters.getProperty("db_url")
-      val USER = DBparameters.getProperty("mysql_user")
-      val PASS = DBparameters.getProperty("mysql_pass")
+      val JDBC_DRIVER = SqlParams.getProperty("jdbc_driver")
+      val DB_URL = SqlParams.getProperty("db_url")
+      val USER = SqlParams.getProperty("mysql_user")
+      val PASS = SqlParams.getProperty("mysql_pass")
 
 
       Class.forName(JDBC_DRIVER)

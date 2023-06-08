@@ -14,9 +14,6 @@ services:
     expose:
       - '5672'
       - '5673'
-    environment:
-      - RABBITMQ_MAX_CONNECTIONS=100  # Increase the maximum number of connections
-      - RABBITMQ_CHANNEL_MAX=1000
     networks:
       spark_net:
         ipv4_address: 172.28.1.1
@@ -44,7 +41,6 @@ services:
   rabbitmq-consumer:
     build:
       context: ./target
-      #dockerfile: /home/houssem/scala-workspace/Europace_DE_Project/project2/Dockerfile
       dockerfile: ../project2/Dockerfile
     depends_on:
       - rabbit-mqpublisher

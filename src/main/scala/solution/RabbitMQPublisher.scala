@@ -25,8 +25,14 @@ object RabbitMQPublisher {
         val connection = factory.newConnection()
         val channel = connection.createChannel()
 
+        //create exhcnage and queue
         val exchangeName = "my-exchange"
         val routingKey = "my-queue"
+        val exchangeType = "direct"
+        channel.exchangeDeclare(exchangeName, exchangeType, true)
+        channel.queueDeclare(routingKey, true, false, false, null)
+        channel.queueBind(routingKey, exchangeName, routingKey)
+
 
         // send each second randomly wiki data
         val input = LogGenerator.printLog()
@@ -47,3 +53,4 @@ object RabbitMQPublisher {
 
   }
 }
+
