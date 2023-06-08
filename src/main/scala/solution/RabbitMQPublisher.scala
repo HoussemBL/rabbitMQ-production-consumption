@@ -12,12 +12,7 @@ object RabbitMQPublisher {
   def main(args: Array[String]): Unit = {
 
 
-    val factory = new ConnectionFactory()
-    //factory.setHost("localhost")
-    factory.setHost("rabbitmq")
-    factory.setPort(5672)
-    factory.setUsername("guest")
-    factory.setPassword("guest")
+    val factory = Utils.Utils.createFactoryConnection()
 
 
     while (true) {
